@@ -82,3 +82,16 @@ The conversation parameter is an array of Message objects. Each Message object h
 ```
 
 The `conversation` parameter is passed in each call to the bot's endpoint. The bot uses this parameter to understand the context of the conversation and generate a relevant response.
+
+## Run evaluations locally
+
+You can test the evaluation functionality by running:
+
+```bash
+yarn
+yarn run evaluate
+```
+
+This is how it looks:
+
+![Evaluation](docs/eval.png)
