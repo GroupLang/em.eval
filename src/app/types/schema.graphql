@@ -1,0 +1,39 @@
+type App_Bot {
+  id: ID! @id
+  endpoint: String!
+  username: String!
+  personName: String!
+  services: [App_Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
+  conversations: [App_Conversation!]!
+    @relationship(type: "PART_OF", direction: OUT)
+}
+
+type App_Service {
+  id: ID! @id
+  name: String!
+  bots: [App_Bot!]! @relationship(type: "HAS_SERVICE", direction: IN)
+  users: [App_User!]! @relationship(type: "HAS_USER", direction: OUT)
+}
+
+type App_User {
+  id: ID! @id
+  username: String!
+  service: App_Service @relationship(type: "HAS_USER", direction: IN)
+}
+
+type App_Conversation {
+  id: ID! @id
+  messages: [App_Message!]! @relationship(type: "HAS_MESSAGE", direction: OUT)
+  bots: [App_Bot!]! @relationship(type: "PART_OF", direction: IN)
+  service: App_Service @relationship(type: "HOSTED_ON", direction: OUT)
+}
+
+union App_Tag_Recipient = App_Bot | App_User
+
+type App_Message {
+  id: ID! @id
+  from: String!
+  tagged: [App_Tag_Recipient!]! @relationship(type: "TAGGED", direction: OUT)
+  text: String!
+  timestamp: String!
+}
