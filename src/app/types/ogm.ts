@@ -9,16 +9,25 @@ const driver = neo4j.driver(
   process.env.NEO4J_URI!,
   neo4j.auth.basic(process.env.NEO4J_USERNAME!, process.env.NEO4J_PASSWORD!)
 );
-const ogm = new OGM({ typeDefs, driver });
+const resolvers = {
+  Bot: {
+    emuleeName: async (source:any) => {
+      const emulee = source.name;
+      return emulee.name;
+    },
+  },
+};
+const ogm = new OGM({ typeDefs, driver, resolvers });
 
-const Bot = ogm.model("App_Bot");
-const Service = ogm.model("App_Service");
-const User = ogm.model("App_User");
-const Conversation = ogm.model("App_Conversation");
-const Message = ogm.model("App_Message");
+const Bot = ogm.model("Bot");
+const Service = ogm.model("Service");
+const User = ogm.model("User");
+const ApiUser = ogm.model("ApiUser");
+const Conversation = ogm.model("Conversation");
+const Message = ogm.model("Message");
 
 const init = async () => await ogm.init();
 init();
 
 export default ogm;
-export { Bot, Service, User, Conversation, Message };
+export { Bot, Service, User, Conversation, Message, ApiUser };

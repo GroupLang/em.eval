@@ -1,39 +1,68 @@
-type App_Bot {
+type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
   endpoint: String!
   username: String!
   personName: String!
-  services: [App_Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
-  conversations: [App_Conversation!]!
-    @relationship(type: "PART_OF", direction: OUT)
+  services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
+  conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-type App_Service {
+type Service @node(labels: ["App_Service"]) {
   id: ID! @id
   name: String!
-  bots: [App_Bot!]! @relationship(type: "HAS_SERVICE", direction: IN)
-  users: [App_User!]! @relationship(type: "HAS_USER", direction: OUT)
+  bots: [Bot!]! @relationship(type: "HAS_SERVICE", direction: IN)
+  users: [User!]! @relationship(type: "HAS_USER", direction: OUT)
 }
 
-type App_User {
+type User @node(labels: ["App_User"]) {
   id: ID! @id
   username: String!
-  service: App_Service @relationship(type: "HAS_USER", direction: IN)
+  service: Service @relationship(type: "HAS_USER", direction: IN)
 }
-
-type App_Conversation {
+type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
-  messages: [App_Message!]! @relationship(type: "HAS_MESSAGE", direction: OUT)
-  bots: [App_Bot!]! @relationship(type: "PART_OF", direction: IN)
-  service: App_Service @relationship(type: "HOSTED_ON", direction: OUT)
+  endpoint: String!
+  username: String!
+  emulee: Emulee! @relationship(type: "EMULATES", direction: OUT)
+  emuleeName: String! @customResolver(requires: "emulee { name}")
+  services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
+  conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-union App_Tag_Recipient = App_Bot | App_User
+type ApiUser @node(labels: ["App_ApiUser"]) {
+  id: ID! @id
+  email: String! @unique
+  apiKey: String! @unique
+  bots: [Bot!]! @relationship(type: "REGISTERED_BY", direction: IN)
+}
 
-type App_Message {
+type Bot @node(labels: ["App_Bot"]) {
+  id: ID! @id
+  endpoint: String!
+  username: String!
+  personName: String!
+  services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
+  conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
+  registeredBy: ApiUser! @relationship(type: "REGISTERED_BY", direction: OUT)
+}
+
+type Emulee @node(labels: ["App_Emulee"]) {
+  name: String! @unique
+}
+
+type Conversation @node(labels: ["App_Conversation"]) {
+  id: ID! @id
+  messages: [Message!]! @relationship(type: "HAS_MESSAGE", direction: OUT)
+  bots: [Bot!]! @relationship(type: "PART_OF", direction: IN)
+  service: Service @relationship(type: "HOSTED_ON", direction: OUT)
+}
+
+union Tag_Recipient = Bot | User
+
+type Message @node(labels: ["App_Message"]) {
   id: ID! @id
   from: String!
-  tagged: [App_Tag_Recipient!]! @relationship(type: "TAGGED", direction: OUT)
+  tagged: [Tag_Recipient!]! @relationship(type: "TAGGED", direction: OUT)
   text: String!
   timestamp: String!
 }
