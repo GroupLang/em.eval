@@ -41,6 +41,9 @@ export type Query = {
   services: Array<Service>;
   servicesConnection: ServicesConnection;
   servicesAggregate: ServiceAggregateSelection;
+  evaluationItems: Array<EvaluationItem>;
+  evaluationItemsConnection: EvaluationItemsConnection;
+  evaluationItemsAggregate: EvaluationItemAggregateSelection;
   users: Array<User>;
   usersConnection: UsersConnection;
   usersAggregate: UserAggregateSelection;
@@ -88,6 +91,22 @@ export type QueryServicesConnectionArgs = {
 
 export type QueryServicesAggregateArgs = {
   where?: InputMaybe<ServiceWhere>;
+};
+
+export type QueryEvaluationItemsArgs = {
+  where?: InputMaybe<EvaluationItemWhere>;
+  options?: InputMaybe<EvaluationItemOptions>;
+};
+
+export type QueryEvaluationItemsConnectionArgs = {
+  first?: InputMaybe<Scalars["Int"]["input"]>;
+  after?: InputMaybe<Scalars["String"]["input"]>;
+  where?: InputMaybe<EvaluationItemWhere>;
+  sort?: InputMaybe<Array<InputMaybe<EvaluationItemSort>>>;
+};
+
+export type QueryEvaluationItemsAggregateArgs = {
+  where?: InputMaybe<EvaluationItemWhere>;
 };
 
 export type QueryUsersArgs = {
@@ -178,6 +197,9 @@ export type Mutation = {
   createServices: CreateServicesMutationResponse;
   deleteServices: DeleteInfo;
   updateServices: UpdateServicesMutationResponse;
+  createEvaluationItems: CreateEvaluationItemsMutationResponse;
+  deleteEvaluationItems: DeleteInfo;
+  updateEvaluationItems: UpdateEvaluationItemsMutationResponse;
   createUsers: CreateUsersMutationResponse;
   deleteUsers: DeleteInfo;
   updateUsers: UpdateUsersMutationResponse;
@@ -230,6 +252,19 @@ export type MutationUpdateServicesArgs = {
   disconnect?: InputMaybe<ServiceDisconnectInput>;
   create?: InputMaybe<ServiceRelationInput>;
   delete?: InputMaybe<ServiceDeleteInput>;
+};
+
+export type MutationCreateEvaluationItemsArgs = {
+  input: Array<EvaluationItemCreateInput>;
+};
+
+export type MutationDeleteEvaluationItemsArgs = {
+  where?: InputMaybe<EvaluationItemWhere>;
+};
+
+export type MutationUpdateEvaluationItemsArgs = {
+  where?: InputMaybe<EvaluationItemWhere>;
+  update?: InputMaybe<EvaluationItemUpdateInput>;
 };
 
 export type MutationCreateUsersArgs = {
@@ -814,6 +849,12 @@ export type CreateEmuleesMutationResponse = {
   emulees: Array<Emulee>;
 };
 
+export type CreateEvaluationItemsMutationResponse = {
+  __typename?: "CreateEvaluationItemsMutationResponse";
+  info: CreateInfo;
+  evaluationItems: Array<EvaluationItem>;
+};
+
 export type CreateInfo = {
   __typename?: "CreateInfo";
   /** @deprecated This field has been deprecated because bookmarks are now handled by the driver. */
@@ -872,10 +913,47 @@ export type EmuleesConnection = {
   edges: Array<EmuleeEdge>;
 };
 
+export type EvaluationItem = {
+  __typename?: "EvaluationItem";
+  id?: Maybe<Scalars["ID"]["output"]>;
+  question?: Maybe<Scalars["String"]["output"]>;
+  originalAnswer?: Maybe<Scalars["String"]["output"]>;
+  originalVector?: Maybe<Array<Maybe<Scalars["Float"]["output"]>>>;
+  emsAnswers?: Maybe<Array<Maybe<Scalars["String"]["output"]>>>;
+  distances?: Maybe<Array<Maybe<Scalars["Float"]["output"]>>>;
+};
+
+export type EvaluationItemAggregateSelection = {
+  __typename?: "EvaluationItemAggregateSelection";
+  count: Scalars["Int"]["output"];
+  id: IdAggregateSelectionNullable;
+  question: StringAggregateSelectionNullable;
+  originalAnswer: StringAggregateSelectionNullable;
+};
+
+export type EvaluationItemEdge = {
+  __typename?: "EvaluationItemEdge";
+  cursor: Scalars["String"]["output"];
+  node: EvaluationItem;
+};
+
+export type EvaluationItemsConnection = {
+  __typename?: "EvaluationItemsConnection";
+  totalCount: Scalars["Int"]["output"];
+  pageInfo: PageInfo;
+  edges: Array<EvaluationItemEdge>;
+};
+
 export type IdAggregateSelectionNonNullable = {
   __typename?: "IDAggregateSelectionNonNullable";
   shortest: Scalars["ID"]["output"];
   longest: Scalars["ID"]["output"];
+};
+
+export type IdAggregateSelectionNullable = {
+  __typename?: "IDAggregateSelectionNullable";
+  shortest?: Maybe<Scalars["ID"]["output"]>;
+  longest?: Maybe<Scalars["ID"]["output"]>;
 };
 
 export type Message = {
@@ -1073,6 +1151,12 @@ export type StringAggregateSelectionNonNullable = {
   longest: Scalars["String"]["output"];
 };
 
+export type StringAggregateSelectionNullable = {
+  __typename?: "StringAggregateSelectionNullable";
+  shortest?: Maybe<Scalars["String"]["output"]>;
+  longest?: Maybe<Scalars["String"]["output"]>;
+};
+
 export type UpdateApiUsersMutationResponse = {
   __typename?: "UpdateApiUsersMutationResponse";
   info: UpdateInfo;
@@ -1095,6 +1179,12 @@ export type UpdateEmuleesMutationResponse = {
   __typename?: "UpdateEmuleesMutationResponse";
   info: UpdateInfo;
   emulees: Array<Emulee>;
+};
+
+export type UpdateEvaluationItemsMutationResponse = {
+  __typename?: "UpdateEvaluationItemsMutationResponse";
+  info: UpdateInfo;
+  evaluationItems: Array<EvaluationItem>;
 };
 
 export type UpdateInfo = {
@@ -3080,6 +3170,117 @@ export type EmuleeWhere = {
   name_NOT_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
 };
 
+export type EvaluationItemCreateInput = {
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  question?: InputMaybe<Scalars["String"]["input"]>;
+  originalAnswer?: InputMaybe<Scalars["String"]["input"]>;
+  originalVector?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  emsAnswers?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  distances?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+};
+
+export type EvaluationItemOptions = {
+  /** Specify one or more EvaluationItemSort objects to sort EvaluationItems by. The sorts will be applied in the order in which they are arranged in the array. */
+  sort?: InputMaybe<Array<EvaluationItemSort>>;
+  limit?: InputMaybe<Scalars["Int"]["input"]>;
+  offset?: InputMaybe<Scalars["Int"]["input"]>;
+};
+
+/** Fields to sort EvaluationItems by. The order in which sorts are applied is not guaranteed when specifying many fields in one EvaluationItemSort object. */
+export type EvaluationItemSort = {
+  id?: InputMaybe<SortDirection>;
+  question?: InputMaybe<SortDirection>;
+  originalAnswer?: InputMaybe<SortDirection>;
+};
+
+export type EvaluationItemUpdateInput = {
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  question?: InputMaybe<Scalars["String"]["input"]>;
+  originalAnswer?: InputMaybe<Scalars["String"]["input"]>;
+  originalVector?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  emsAnswers?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  distances?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  originalVector_POP?: InputMaybe<Scalars["Int"]["input"]>;
+  originalVector_PUSH?: InputMaybe<
+    Array<InputMaybe<Scalars["Float"]["input"]>>
+  >;
+  emsAnswers_POP?: InputMaybe<Scalars["Int"]["input"]>;
+  emsAnswers_PUSH?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  distances_POP?: InputMaybe<Scalars["Int"]["input"]>;
+  distances_PUSH?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+};
+
+export type EvaluationItemWhere = {
+  OR?: InputMaybe<Array<EvaluationItemWhere>>;
+  AND?: InputMaybe<Array<EvaluationItemWhere>>;
+  NOT?: InputMaybe<EvaluationItemWhere>;
+  id?: InputMaybe<Scalars["ID"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  id_NOT?: InputMaybe<Scalars["ID"]["input"]>;
+  id_IN?: InputMaybe<Array<InputMaybe<Scalars["ID"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  id_NOT_IN?: InputMaybe<Array<InputMaybe<Scalars["ID"]["input"]>>>;
+  id_CONTAINS?: InputMaybe<Scalars["ID"]["input"]>;
+  id_STARTS_WITH?: InputMaybe<Scalars["ID"]["input"]>;
+  id_ENDS_WITH?: InputMaybe<Scalars["ID"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  id_NOT_CONTAINS?: InputMaybe<Scalars["ID"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  id_NOT_STARTS_WITH?: InputMaybe<Scalars["ID"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  id_NOT_ENDS_WITH?: InputMaybe<Scalars["ID"]["input"]>;
+  question?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  question_NOT?: InputMaybe<Scalars["String"]["input"]>;
+  question_IN?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  question_NOT_IN?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  question_CONTAINS?: InputMaybe<Scalars["String"]["input"]>;
+  question_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  question_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  question_NOT_CONTAINS?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  question_NOT_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  question_NOT_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  originalAnswer?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalAnswer_NOT?: InputMaybe<Scalars["String"]["input"]>;
+  originalAnswer_IN?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalAnswer_NOT_IN?: InputMaybe<
+    Array<InputMaybe<Scalars["String"]["input"]>>
+  >;
+  originalAnswer_CONTAINS?: InputMaybe<Scalars["String"]["input"]>;
+  originalAnswer_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  originalAnswer_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalAnswer_NOT_CONTAINS?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalAnswer_NOT_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalAnswer_NOT_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  originalVector?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalVector_NOT?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  originalVector_INCLUDES?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  originalVector_NOT_INCLUDES?: InputMaybe<Scalars["Float"]["input"]>;
+  emsAnswers?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  emsAnswers_NOT?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  emsAnswers_INCLUDES?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  emsAnswers_NOT_INCLUDES?: InputMaybe<Scalars["String"]["input"]>;
+  distances?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  distances_NOT?: InputMaybe<Array<InputMaybe<Scalars["Float"]["input"]>>>;
+  distances_INCLUDES?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  distances_NOT_INCLUDES?: InputMaybe<Scalars["Float"]["input"]>;
+};
+
 export type MessageConnectInput = {
   tagged?: InputMaybe<MessageTaggedConnectInput>;
 };
@@ -4180,6 +4381,78 @@ export interface StringAggregateInputNonNullable {
   shortest?: boolean;
   longest?: boolean;
 }
+export interface IdAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface EvaluationItemAggregateSelectionInput {
+  count?: boolean;
+  id?: IdAggregateInputNullable;
+  question?: StringAggregateInputNullable;
+  originalAnswer?: StringAggregateInputNullable;
+}
+
+export declare class EvaluationItemModel {
+  public find(args?: {
+    where?: EvaluationItemWhere;
+
+    options?: EvaluationItemOptions;
+    selectionSet?: string | DocumentNode | SelectionSetNode;
+    args?: any;
+    context?: any;
+    rootValue?: any;
+  }): Promise<EvaluationItem[]>;
+  public create(args: {
+    input: EvaluationItemCreateInput[];
+    selectionSet?: string | DocumentNode | SelectionSetNode;
+    args?: any;
+    context?: any;
+    rootValue?: any;
+  }): Promise<CreateEvaluationItemsMutationResponse>;
+  public update(args: {
+    where?: EvaluationItemWhere;
+    update?: EvaluationItemUpdateInput;
+
+    selectionSet?: string | DocumentNode | SelectionSetNode;
+    args?: any;
+    context?: any;
+    rootValue?: any;
+  }): Promise<UpdateEvaluationItemsMutationResponse>;
+  public delete(args: {
+    where?: EvaluationItemWhere;
+
+    context?: any;
+    rootValue?: any;
+  }): Promise<{ nodesDeleted: number; relationshipsDeleted: number }>;
+  public aggregate(args: {
+    where?: EvaluationItemWhere;
+
+    aggregate: EvaluationItemAggregateSelectionInput;
+    context?: any;
+    rootValue?: any;
+  }): Promise<EvaluationItemAggregateSelection>;
+}
+
+export interface IdAggregateInputNonNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNonNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface IdAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
 export interface UserAggregateSelectionInput {
   count?: boolean;
   id?: IdAggregateInputNonNullable;
@@ -4235,6 +4508,14 @@ export interface IdAggregateInputNonNullable {
   longest?: boolean;
 }
 export interface StringAggregateInputNonNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface IdAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNullable {
   shortest?: boolean;
   longest?: boolean;
 }
@@ -4297,6 +4578,14 @@ export interface StringAggregateInputNonNullable {
   shortest?: boolean;
   longest?: boolean;
 }
+export interface IdAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
 export interface EmuleeAggregateSelectionInput {
   count?: boolean;
   name?: StringAggregateInputNonNullable;
@@ -4348,6 +4637,14 @@ export interface IdAggregateInputNonNullable {
   longest?: boolean;
 }
 export interface StringAggregateInputNonNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface IdAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNullable {
   shortest?: boolean;
   longest?: boolean;
 }
@@ -4408,6 +4705,14 @@ export interface StringAggregateInputNonNullable {
   shortest?: boolean;
   longest?: boolean;
 }
+export interface IdAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
+export interface StringAggregateInputNullable {
+  shortest?: boolean;
+  longest?: boolean;
+}
 export interface MessageAggregateSelectionInput {
   count?: boolean;
   id?: IdAggregateInputNonNullable;
@@ -4463,6 +4768,7 @@ export declare class MessageModel {
 export interface ModelMap {
   Bot: BotModel;
   Service: ServiceModel;
+  EvaluationItem: EvaluationItemModel;
   User: UserModel;
   ApiUser: ApiUserModel;
   Emulee: EmuleeModel;

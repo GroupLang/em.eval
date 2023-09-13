@@ -25,6 +25,7 @@ const User = ogm.model("User");
 const ApiUser = ogm.model("ApiUser");
 const Conversation = ogm.model("Conversation");
 const Message = ogm.model("Message");
+const EvaluationItem = ogm.model("EvaluationItem");
 
 const init = async () => await ogm.init();
 init();

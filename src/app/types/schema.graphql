@@ -14,6 +14,15 @@ type Service @node(labels: ["App_Service"]) {
   users: [User!]! @relationship(type: "HAS_USER", direction: OUT)
 }
 
+type EvaluationItem @node(labels: ["App_EvaluationItem"]) {
+  id: ID
+  question: String
+  originalAnswer: String
+  originalVector: [Float]
+  emsAnswers: [String]
+  distances: [Float]
+}
+
 type User @node(labels: ["App_User"]) {
   id: ID! @id
   username: String!
