@@ -27,6 +27,9 @@ type User @node(labels: ["App_User"]) {
   id: ID! @id
   username: String!
   service: Service @relationship(type: "HAS_USER", direction: IN)
+  email: String! @unique
+  apiKey: String! @unique
+  bots: [Bot!]! @relationship(type: "REGISTERED_BY", direction: IN)
 }
 type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
@@ -38,13 +41,6 @@ type Bot @node(labels: ["App_Bot"]) {
   conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
 }
 
-type ApiUser @node(labels: ["App_ApiUser"]) {
-  id: ID! @id
-  email: String! @unique
-  apiKey: String! @unique
-  bots: [Bot!]! @relationship(type: "REGISTERED_BY", direction: IN)
-}
-
 type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
   endpoint: String!
@@ -52,7 +48,7 @@ type Bot @node(labels: ["App_Bot"]) {
   personName: String!
   services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
   conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
-  registeredBy: ApiUser! @relationship(type: "REGISTERED_BY", direction: OUT)
+  registeredBy: User! @relationship(type: "REGISTERED_BY", direction: OUT)
 }
 
 type Emulee @node(labels: ["App_Emulee"]) {

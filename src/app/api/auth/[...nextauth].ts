@@ -1,24 +1,20 @@
 
 
-import NextAuth from 'next-auth'
+import NextAuth, { Account, User as NextAuthUser } from 'next-auth'
 import GithubProvider from 'next-auth/providers/github'
-import { ApiUser } from '@/app/types/ogm'
-import { User } from 'next-auth'
+import { User } from '@/app/types/ogm'
 import { JWT } from 'next-auth/jwt'
 import { AdapterUser } from 'next-auth/adapters'
-import { ApiUser as TApiUser } from '@/app/types/ogm-types'
-import { SignInOptions } from 'next-auth/react'
+import { User as TUser } from '@/app/types/ogm-types'
 import bcrypt from 'bcryptjs';
 
 const salt = bcrypt.genSaltSync(10);
 
 
-interface ExtendedUser extends User {
-  apiKey?: string;
-}
+type UserParam = NextAuthUser | NextAuthUser;
 
 interface ExtendedJWT extends JWT {
-  user?: ExtendedUser;
+  user?: TUser;
 }
 
 const pages = {
@@ -29,12 +25,26 @@ const pages = {
   newUser: undefined // If set, new users will be directed here on first sign in
 }
 
-const jwt = async ({ token, user }: {token: ExtendedJWT, user: User | ExtendedUser | AdapterUser}): Promise<any> =>
-  ('apiKey' in user) ? { ...token, apiKey: user.apiKey } : token;
 
-const signIn = async ({ user, account, profile, email, credentials }:SignInOptions) => {
-  const extendedUser = user as ExtendedUser;
-  const isAllowedToSignIn = process.env.WHITELISTED_GITHUB!.split(',').includes(extendedUser.id)
+const jwt = async ({ token, user }: {token: ExtendedJWT, user: UserParam}): Promise<any> => {
+
+  if (user) {
+    try {
+      // The user just logged in, so we fetch additional data from the database and add it to the JWT
+      const [dbUser] = await User.find({ where: { email: user.email } });
+      token.user = dbUser
+      return user;
+    } catch (e) {
+      console.error("Error creating JWT:", e)
+    }
+  } else {
+    console.error("No user present when creating jwt")
+    return false;
+  }
+}
+const signIn = async ({ user, account }:{ user: UserParam, account: Account | null}) => {
+
+  const isAllowedToSignIn = process.env.WHITELISTED_GITHUB!.split(',').includes(user.id)
 
   if (!isAllowedToSignIn) {
     return `/auth/error?error=You are not allowed to sign in. Ask the administrator to add you to the whitelist.`;
@@ -43,11 +53,11 @@ const signIn = async ({ user, account, profile, email, credentials }:SignInOptio
   if (!('apiKey' in extendedUser)) return false;
 
   try {
-    const users = await ApiUser.find<TApiUser[]>({ where: { email } });
+    const users = await User.find<TUser[]>({ where: { email } });
     let apiKey = '';
     if (users.length === 0) {
       apiKey = generateApiKey();
-      const apiUser = await ApiUser.create({ input: { apiKey, email }});
+      const apiUser = await User.create({ input: { apiKey, email }});
     }
     extendedUser.apiKey = apiKey; 
     return true;

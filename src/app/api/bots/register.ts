@@ -1,5 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-const apiKeys = JSON.parse(process.env.API_KEYS!);
+import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
+import { User, Bot } from '@/app/types/ogm';
+import { getServerSession } from 'next-auth/next';
 
 type BotData = {
   username: string,
@@ -7,24 +8,47 @@ type BotData = {
   endpoint: string
 }
 
-type ResponseData = {
-  message: string,
-  bot?: BotData
+type handler = NextApiHandler<{message: string,
+bot?: BotData
 }
+>
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
-  const apiKey = req.headers['x-api-key']
+const handler:NextApiHandler = async (req, res) => {
   const botData: BotData = req.body
 
-  // TODO: validate botData from the graph db
-  if (!apiKey || apiKey !== apiKeys[botData.username]) {
-    return res.status(401).json({ message: 'Invalid API key' })
+  // Get the user session
+  const session = await getServerSession();
+
+  // If no user is logged in, return a 403
+  if (!session || !session.user) {
+    res.status(403).json({ message: 'You must be logged in to register a bot.' });
+    return;
   }
 
-  // TODO: register bot
+  try {
+    // Find the user
+    const users = await User.find({ where: { email: session.user.email } });
 
-  res.status(200).json({ message: 'Bot registered successfully', bot: botData })
+    // If user not found, return an error
+    if (users.length === 0) {
+      res.status(404).json({ message: 'User not found.' });
+      return;
+    }
+
+    // Create a new bot and attach it to the user
+    const bot = await Bot.create({
+      input: {
+        ...botData,
+        registeredBy: { connect: { where: { id: users[0].id } } },
+        apiKey: users[0].apiKey
+      }
+    });
+
+    res.status(200).json({ message: 'Bot registered successfully', bot });
+  } catch (e) {
+    console.error('Error', e)
+    res.status(500).json({ message: 'An error occurred while registering the bot.' });
+  }
 }
+
+export default handler;

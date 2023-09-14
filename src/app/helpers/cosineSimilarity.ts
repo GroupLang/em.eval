@@ -34,9 +34,9 @@ const getCosineSimilarities = async ({ question, originalAnswer, emsAnswers }:Ev
     return points;
   }
 
-  const scoredDistances: {[key:string]: {similarity: number, points: number}} = {};
+  const scoredDistances: {[key:string]: {similarity: number, points: number, winner: boolean, loser: boolean }} = {};
   Object.entries(vectorDistances).forEach(([key, value]) => {
-    scoredDistances[key] = {similarity: value, points: getPoints(value)};
+    scoredDistances[key] = {similarity: value, points: getPoints(value), winner: (value === highestValue), loser: (value === lowestValue)};
   });
 
   return scoredDistances;

@@ -21,8 +21,19 @@ const ogm = new OGM({ typeDefs, driver, resolvers });
 
 const Bot = ogm.model("Bot");
 const Service = ogm.model("Service");
-const User = ogm.model("User");
-const ApiUser = ogm.model("ApiUser");
+const User = ogm.model("User").byGithubUsername = async function(githubUsername: string) {
+  const session = driver.session();
+  try {
+    const { records } = await session.run(`
+      MATCH (u:User {githubUsername: $githubUsername})
+      RETURN u
+    `, { githubUsername });
+    return records.map(record => record.get('u').properties);
+  } finally {
+    await session.close();
+  }
+};
+
 const Conversation = ogm.model("Conversation");
 const Message = ogm.model("Message");
 const EvaluationItem = ogm.model("EvaluationItem");
@@ -31,4 +42,4 @@ const init = async () => await ogm.init();
 init();
 
 export default ogm;
-export { Bot, Service, User, Conversation, Message, ApiUser };
+export { Bot, Service, User, Conversation, Message };

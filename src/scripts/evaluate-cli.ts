@@ -52,30 +52,23 @@ const runScript = async () => {
   colors.enable()
 
   console.log('Evaluating...'.rainbow);
-  const result = await getCosineSimilarities(question, originalAnswer, emsAnswers, apiKey || process.env.OPENAI_API_KEY!);
-  const lowestValue = Math.min(...Object.values(result));
-  const highestValue = Math.max(...Object.values(result));
-  const getPoints = (value: number) => {
-    const points = Math.round((value - lowestValue) / (highestValue - lowestValue) * 100);
-    return points;
-  }
+  const result = await getCosineSimilarities({question, originalAnswer, emsAnswers }, apiKey || process.env.OPENAI_API_KEY!);
+
 
   var Table = require('cli-table');
   var table = new Table({head:['', 'Answer', 'Similarity', 'Points', 'Text']});
   
-  Object.entries(result).map(([key, value], i) => {
-    const lowest = value === lowestValue;
-    const highest = value === highestValue;
-    table.push([highest ? '🏆' : '', key, value, getPoints(value), lowest ? emsAnswers[key].zalgo : emsAnswers[key]]);
+  Object.entries(result).map(([key, {similarity, points, winner, loser}], i) => {
+    table.push([(winner && '🏆') || (loser && '☠️') || '', key, similarity, points, emsAnswers[key]]);
   });
 
   console.log(`
   ${('Results:'.bgGreen)}
   ${('Question:').underline}\t\t ${question}
   ${('Original Answer:').bgGreen}\t\t ${originalAnswer}
-  ${('Answers:').underline}
-  ${table.toString()}
-  `);
+  ${('Answers:').underline}`);
+
+  console.log(table.toString())
 
   rl.close();
 };
