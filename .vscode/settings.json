@@ -1,0 +1,6 @@
+{
+  "debug.javascript.defaultRuntimeExecutable": {
+    
+    "pwa-node": "/Users/claudiobrandolino/.nvm/versions/node/v20.6.1/bin/node"
+  }
+}

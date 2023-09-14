@@ -1,19 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { OpenAI } from 'openai'
-import { Embedding } from 'openai/resources/embeddings.mjs';
-import {cosineSimilarity} from 'vector-cosine-similarity';
-import { getCosineSimilarities } from './cosineSimilarity';
-
-
-type EvaluationData = {
-  question: string,
-  originalAnswer: string,
-  emsAnswers: { [key:string]: string }
-}
+import { getCosineSimilarities, type EvaluationData } from '../../helpers/cosineSimilarity';
 
 type ResponseData = {
   message: string,
-  vectorDistances?: { [key:string]: number }
+  scoredDistances?: { [key:string]: {similarity: number, points: number} }
 }
 
 export default async function handler(
@@ -21,9 +11,7 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   const evaluationData: EvaluationData = req.body
+  const scoredDistances = await getCosineSimilarities(evaluationData)
 
-  const { question, originalAnswer, emsAnswers } = evaluationData;
-  const vectorDistances = await getCosineSimilarities(question, originalAnswer, emsAnswers)
-
-  res.status(200).json({ message: 'Evaluation completed successfully', vectorDistances })
+  res.status(200).json({ message: 'Evaluation completed successfully', scoredDistances })
 }

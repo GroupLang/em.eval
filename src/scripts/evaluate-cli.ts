@@ -2,7 +2,7 @@ process.env['NODE_NO_WARNINGS'] = '1'
 
 require('dotenv').config({ path: '.env.local'})
 import readline from 'readline';
-import { getCosineSimilarities } from '@/app/api/bots/cosineSimilarity';
+import { getCosineSimilarities } from '@/app/helpers/cosineSimilarity';
 import colors from 'colors';
 
 const rl = readline.createInterface({
