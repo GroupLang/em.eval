@@ -1,24 +1,40 @@
 # em.eval
 
-## Process Description
+## Bot creation and deployment interface
 
-1. There is a main utility bot that is used to register other bots.
-2. Each bot is represented by an endpoint and a username.
+The interface will allow users to create and deploy bots. It will allow login from github, and provide an external app API key for each user.
+
+This key will be used in the bot API to authenticate requests.
+
+## Chatbot gateway
+
+The gateway allow bots to be instantiated in different channels and through different APIs. The gateway will be responsible for:
+
+1. Receiving the messages sent in any channel where bots are instantiated.
+2. Keeping track of the history of each instance of a bot.
 3. When a bot is tagged or replied to, the system will call the bot's endpoint with the following parameters:
    - **context**: Previous messages relevant to the request.
    - **conversation**: If previous exchanges with the bot occurred, a set of these exchanges.
    - **message**: The tagged/reply message.
    - **users**: Information on mentioned users, by id.
 4. The bot will respond with a message.
-5. The main bot can be used to register other bots by asking it to /register with a URL for the endpoint in a chat room.
+5. The gateway will post the bot's message as a reply to the original message.
 
-## Bots API
+This is how it looks:
 
-Each bot will be defined by:
+![Evaluation](docs/eval.png)
+
+## Bot API
+
+This api should be implemented by bot providers. It will allow the gateway to call the bot's endpoint and broker its communications with the channels where the bot is instantiated.
+
+Each bot is defined by:
 
 - a username
 - the name of the person it is emulating
 - an endpoint (URL)
+
+Only one endpiint should be defined per bot. The endpoint will be called by the gateway when the bot is tagged or replied to, with the following POST request:
 
 ### Request [POST]
 
@@ -83,15 +99,9 @@ The conversation parameter is an array of Message objects. Each Message object h
 
 The `conversation` parameter is passed in each call to the bot's endpoint. The bot uses this parameter to understand the context of the conversation and generate a relevant response.
 
-## Run evaluations locally
-
 You can test the evaluation functionality by running:
 
 ```bash
 yarn
 yarn run evaluate
 ```
-
-This is how it looks:
-
-![Evaluation](docs/eval.png)
