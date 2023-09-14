@@ -6,6 +6,21 @@ The interface will allow users to create and deploy bots. It will allow login fr
 
 This key will be used in the bot API to authenticate requests.
 
+```mermaid
+sequenceDiagram
+    participant User
+    participant Application
+    participant GitHub
+    User->>Application: Request to login via GitHub
+    Application->>GitHub: Redirect user to GitHub for authentication
+    GitHub->>User: User enters GitHub credentials
+    User->>GitHub: Submit credentials
+    GitHub->>Application: Return authentication token
+    Application->>Application: Check if user is allowed to sign in (whitelist check)
+    Application->>Application: Check if user already exists in database, create key otherwise 
+    Application->>User: Return Bot API key to user
+```
+
 ## Chatbot gateway
 
 The gateway allow bots to be instantiated in different channels and through different APIs. The gateway will be responsible for:

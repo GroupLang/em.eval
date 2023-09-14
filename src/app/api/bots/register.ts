@@ -19,6 +19,7 @@ export default function handler(
   const apiKey = req.headers['x-api-key']
   const botData: BotData = req.body
 
+  // TODO: validate botData from the graph db
   if (!apiKey || apiKey !== apiKeys[botData.username]) {
     return res.status(401).json({ message: 'Invalid API key' })
   }
