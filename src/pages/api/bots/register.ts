@@ -1,5 +1,4 @@
 import type { NextApiHandler, NextApiRequest, NextApiResponse } from 'next'
-import { User, Bot } from '@/app/types/ogm';
 import { getServerSession } from 'next-auth/next';
 
 type BotData = {
@@ -27,7 +26,6 @@ const handler:NextApiHandler = async (req, res) => {
 
   try {
     // Find the user
-    const users = await User.find({ where: { email: session.user.email } });
 
     // If user not found, return an error
     if (users.length === 0) {
@@ -35,14 +33,15 @@ const handler:NextApiHandler = async (req, res) => {
       return;
     }
 
-    // Create a new bot and attach it to the user
-    const bot = await Bot.create({
-      input: {
-        ...botData,
-        registeredBy: { connect: { where: { id: users[0].id } } },
-        apiKey: users[0].apiKey
-      }
-    });
+    // // Create a new bot and attach it to the user
+    // const bot = await ogm.models.Bot.new({
+    //   username: botData.username,
+    //   id: `bot-${botData.username}`,
+    //   endpoint: botData.endpoint,
+    //   emuleeName: botData.name,
+    //   personName: botData.name,
+    //   services: [Servic],
+    // });
 
     res.status(200).json({ message: 'Bot registered successfully', bot });
   } catch (e) {

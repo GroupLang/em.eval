@@ -11,7 +11,6 @@ type Service @node(labels: ["App_Service"]) {
   id: ID! @id
   name: String!
   bots: [Bot!]! @relationship(type: "HAS_SERVICE", direction: IN)
-  users: [User!]! @relationship(type: "HAS_USER", direction: OUT)
 }
 
 type EvaluationItem @node(labels: ["App_EvaluationItem"]) {
@@ -26,11 +25,10 @@ type EvaluationItem @node(labels: ["App_EvaluationItem"]) {
 type User @node(labels: ["App_User"]) {
   id: ID! @id
   username: String!
-  service: Service @relationship(type: "HAS_USER", direction: IN)
   email: String! @unique
   apiKey: String! @unique
-  bots: [Bot!]! @relationship(type: "REGISTERED_BY", direction: IN)
 }
+
 type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
   endpoint: String!
@@ -38,6 +36,7 @@ type Bot @node(labels: ["App_Bot"]) {
   emulee: Emulee! @relationship(type: "EMULATES", direction: OUT)
   emuleeName: String! @customResolver(requires: "emulee { name}")
   services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
+  user: [User!]! @relationship(type: "REGISTERED_BY", direction: OUT)
   conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
 }
 

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getCosineSimilarities, type EvaluationData } from '../../helpers/cosineSimilarity';
+import { getCosineSimilarities, type EvaluationData } from '../../../helpers/cosineSimilarity';
 
 type ResponseData = {
   message: string,
