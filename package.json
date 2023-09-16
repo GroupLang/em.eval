@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "eval": "tsx src/scripts/evaluate-cli.ts",
+    "schema:build":  "tsx src/scripts/generate-schema.ts",
     "test": "jest"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
     "@types/node": "20.6.0",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
+    "apollo-server-micro": "^3.12.1",
     "autoprefixer": "10.4.15",
     "bcryptjs": "^2.4.3",
     "cli-table": "^0.3.11",
