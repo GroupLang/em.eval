@@ -1,14 +1,11 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import gql from 'graphql-tag';
-
-const client = require('../graphql/client');
 import styles from '../style/Home.module.css';
-
 import { SignInOut } from '../components/SignInOut';
 import { UserList } from '../components/UserList';
 import { User } from '@/graphql';
-
+import client from '../helpers/apolloClient';
 
 export async function getStaticProps() {
   const { data } = await client.query({
@@ -24,16 +21,11 @@ export async function getStaticProps() {
       }
     `,
   }).catch((e:unknown) => {
-    // We need to handle the case where client.query returns void; otherwise our app will have a build failure
     console.error(`Unable to query our backend API: ${e}`)
-    console.error(`Unable to query our backend API: ${e}`)
-    console.error(e);
 
-    // Notice we're matching the shape our destructured variable is looking for
     return {
       data: null
     }
-
   })
 
   return {
