@@ -6,6 +6,7 @@ import { Neo4jAdapter } from '@next-auth/neo4j-adapter';
 import TwitterProvider from 'next-auth/providers/twitter';
 import GitHubProvider from 'next-auth/providers/github';
 import { AdapterUser } from 'next-auth/adapters';
+import { generateApiKey } from '@/helpers/apiKey';
 
 const driver = neo4j.driver(
   process.env.NEO4J_URI!,
@@ -40,18 +41,19 @@ export default NextAuth({
       return false;
     },
     jwt: async ({ token, user: { image, name, email} }:{token: JWT, user: User}) => {
-      const dbUser = await neo4jSession.run(
-        `
-        MERGE (u:User { username: $name})
-        ON CREATE SET u.username = $name, u.email = $email, u.image = $image, u.apiKey = $apiKey
-        ON MATCH SET u.username = $name, u.email = $email, u.image = $image
-        RETURN u
-        `, {
-          name,
-          email,
-          image,
-          apiKey: token.apiKey,
-        });
+        const dbUser = await neo4jSession.run(
+          `
+          MERGE (u:User { username: $name})
+          ON CREATE SET u.username = $name, u.email = $email, u.image = $image, u.apiKey = $apiKey
+          ON MATCH SET u.username = $name, u.email = $email, u.image = $image
+          RETURN u
+          `, {
+            name,
+            email,
+            image,
+            apiKey: token.apiKey || generateApiKey(), // generateApiKey is a hypothetical function that generates a new API key
+          });
+        // ... rest of the code
       if (dbUser.records.length) {
         const neo4jUser = dbUser.records[0].get('u').properties;
         token.neo4jId = neo4jUser.id;

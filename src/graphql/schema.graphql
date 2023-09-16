@@ -1,3 +1,21 @@
+type Query {
+  publicBots: [Bot]
+}
+type Mutation {
+  addBot(input: BotInput): Bot
+}
+
+input BotInput {
+  endpoint: String!
+  username: String!
+  personName: String!
+  services: [ServiceInput!]!
+}
+
+input ServiceInput {
+  name: String!
+}
+
 type Bot @node(labels: ["App_Bot"]) {
   id: ID! @id
   endpoint: String!
@@ -5,6 +23,7 @@ type Bot @node(labels: ["App_Bot"]) {
   personName: String!
   services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
   conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
+  registeredBy: User! @relationship(type: "REGISTERED_BY", direction: OUT)
 }
 
 type Service @node(labels: ["App_Service"]) {
@@ -28,27 +47,6 @@ type User @node(labels: ["App_User"]) {
   email: String! @unique @auth(requires: OWNER)
   apiKey: String! @unique
   bots: [Bot!]! @relationship(type: "HAS_BOT", direction: OUT)
-}
-
-type Bot @node(labels: ["App_Bot"]) {
-  id: ID! @id
-  endpoint: String!
-  username: String!
-  emulee: Emulee! @relationship(type: "EMULATES", direction: OUT)
-  emuleeName: String! @customResolver(requires: "emulee { name}")
-  services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
-  conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
-  owner: User! @relationship(type: "HAS_BOT", direction: IN)
-}
-
-type Bot @node(labels: ["App_Bot"]) {
-  id: ID! @id
-  endpoint: String!
-  username: String!
-  personName: String!
-  services: [Service!]! @relationship(type: "HAS_SERVICE", direction: OUT)
-  conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
-  registeredBy: User! @relationship(type: "REGISTERED_BY", direction: OUT)
 }
 
 type Emulee @node(labels: ["App_Emulee"]) {

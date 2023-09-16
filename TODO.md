@@ -9,4 +9,3 @@ Upon successful auth, redirect to a page that will:
 - display key to the user;
 - allow user to create a bot;
 - list user's bots
-- 

@@ -23,6 +23,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/apollo/client.js", "src/components/UserList.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/graphql/apollo/client.js", "src/components/UserList.jsx", "src/graphql/index.js", "src/graphql/client.mts", "src/scripts/generate-schema.ts", "src/graphql/resolvers.js", "src/graphql/schema.ts", "src/graphql/neo4j.ts"],
   "exclude": ["node_modules"]
 }

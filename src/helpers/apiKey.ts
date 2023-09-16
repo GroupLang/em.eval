@@ -5,7 +5,7 @@ import { User as UserT } from '../graphql/ogm-types';
 
 
 
-const generateApiKey = () => {
+export const generateApiKey = () => {
   const length = 32;
   const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let retVal = "";

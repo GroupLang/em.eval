@@ -1,16 +1,47 @@
 import Head from 'next/head';
 import Image from 'next/image';
-import Link from 'next/link';
 import gql from 'graphql-tag';
 
-import client from '../apollo/client';
-
+const client = require('../graphql/client');
 import styles from '../style/Home.module.css';
 
 import { SignInOut } from '../components/SignInOut';
 import { UserList } from '../components/UserList';
 import { User } from '@/graphql';
 
+
+export async function getStaticProps() {
+  const { data } = await client.query({
+    query: gql`
+      query Users {
+        users {
+          id
+          name
+          accounts {
+            provider
+          }
+        }
+      }
+    `,
+  }).catch((e:unknown) => {
+    // We need to handle the case where client.query returns void; otherwise our app will have a build failure
+    console.error(`Unable to query our backend API: ${e}`)
+    console.error(`Unable to query our backend API: ${e}`)
+    console.error(e);
+
+    // Notice we're matching the shape our destructured variable is looking for
+    return {
+      data: null
+    }
+
+  })
+
+  return {
+    props: {
+      users: data?.users || null,
+    },
+  };
+}
 export default function Home({ users }:{ users: User[] }) {
   return (
     <div className={styles.container}>
@@ -42,35 +73,4 @@ export default function Home({ users }:{ users: User[] }) {
       </footer>
     </div>
   );
-}
-
-export async function getStaticProps() {
-  const { data } = await client.query({
-    query: gql`
-      query Users {
-        users {
-          id
-          name
-          accounts {
-            provider
-          }
-        }
-      }
-    `,
-  }).catch(e => {
-    // We need to handle the case where client.query returns void; otherwise our app will have a build failure
-    console.error(`Unable to query our backend API: ${e}`)
-
-    // Notice we're matching the shape our destructured variable is looking for
-    return {
-      data: null
-    }
-
-  })
-
-  return {
-    props: {
-      users: data?.users || null,
-    },
-  };
 }

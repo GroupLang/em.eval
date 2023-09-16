@@ -1,22 +1,23 @@
 import { OGM, Model as BaseM, generate } from '@neo4j/graphql-ogm';
-
+import createYoga from 'graphql-yoga';
 import * as types  from './ogm-types';
-import { typeDefs } from './schema';
-import { driver } from '../neo4j';
+import { driver } from './neo4j';
+import { Session } from 'next-auth';
+import resolvers from './resolvers';
+import { readFileSync } from 'fs';
+import path from 'path';
+
+// Define the Context type
+interface Context {
+  session: Session | null;
+  ogm: OGM;
+}
+// Building the Neo4j GraphQL schema is an async process
+
+const typeDefs = readFileSync(path.join(__dirname, 'schema.graphql')).toString('utf-8');
 
 
-
-const resolvers = {
-  Bot: {
-    emuleeName: async (source:any) => {
-      const emulee = source.name;
-      return emulee.name;
-    },
-  },
-};
-
-const ogm = new OGM<types.ModelMap>({ typeDefs, driver, resolvers });
-
+const ogm = new OGM({ typeDefs, driver, resolvers });
 
 class Model<T> extends BaseM {
   model: any;
