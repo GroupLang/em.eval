@@ -1,4 +1,4 @@
 export * from "./ogm-types"
 export * from "./resolvers"
 export * from "./neoschema"
-export { useQuery, useMutation, useSubscription } from "@apollo/client";
+export { useQuery, useMutation, useSubscription, QueryResult } from "@apollo/client";
