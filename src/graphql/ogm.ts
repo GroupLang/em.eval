@@ -8,7 +8,7 @@ import { readFileSync } from 'fs';
 import path from 'path';
 
 // Define the Context type
-interface Context {
+export interface Context {
   session: Session | null;
   ogm: OGM;
 }
@@ -26,7 +26,7 @@ class Model<T> extends BaseM {
     this.name = name;
     this.model = model;
   }
-  async new(props:T) {
+  async new(props:Partial<T>) {
 
     const newInstance = await this.model.create({ input: { props }})
     return newInstance as T;
@@ -40,12 +40,16 @@ class Model<T> extends BaseM {
   }
 }
 
-const Bot =  new Model<types.Bot>("Bot");
-const Service = new Model<types.Service>("Service");
-const User =  new Model<types.User>("User");
-const Conversation =  new Model<types.Conversation>("Conversation");
-const Message =  new Model<types.Message>("Message");
-const EvaluationItem = new Model<types.EvaluationItem>("EvaluationItem");
+type ModelT<T> = Model<T> & T
+
+
+const Bot =  new Model<types.Bot>("Bot") as ModelT<types.Bot>;
+const Service = new Model<types.Service>("Service") as ModelT<types.Service>;
+const User =  new Model<types.User>("User") as ModelT<types.User>;
+const Conversation =  new Model<types.Conversation>("Conversation") as ModelT<types.Conversation>;
+const Message =  new Model<types.Message>("Message") as ModelT<types.Message>;
+const EvaluationItem = new Model<types.EvaluationItem>("EvaluationItem") as ModelT<types.EvaluationItem>;
+
 
 export default ogm;
 export { Bot, Service, User, Conversation, Message, EvaluationItem };

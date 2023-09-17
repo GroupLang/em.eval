@@ -36,6 +36,7 @@ export type Scalars = {
 export type Query = {
   __typename?: "Query";
   publicBots?: Maybe<Array<Maybe<Bot>>>;
+  getMessages?: Maybe<Array<Maybe<Message>>>;
   bots: Array<Bot>;
   botsConnection: BotsConnection;
   botsAggregate: BotAggregateSelection;
@@ -57,6 +58,10 @@ export type Query = {
   messages: Array<Message>;
   messagesConnection: MessagesConnection;
   messagesAggregate: MessageAggregateSelection;
+};
+
+export type QueryGetMessagesArgs = {
+  conversationId: Scalars["ID"]["input"];
 };
 
 export type QueryBotsArgs = {
@@ -174,6 +179,7 @@ export type QueryMessagesAggregateArgs = {
 export type Mutation = {
   __typename?: "Mutation";
   addBot?: Maybe<Bot>;
+  sendMessage?: Maybe<Message>;
   createBots: CreateBotsMutationResponse;
   deleteBots: DeleteInfo;
   updateBots: UpdateBotsMutationResponse;
@@ -199,6 +205,10 @@ export type Mutation = {
 
 export type MutationAddBotArgs = {
   input?: InputMaybe<BotInput>;
+};
+
+export type MutationSendMessageArgs = {
+  input?: InputMaybe<MessageInput>;
 };
 
 export type MutationCreateBotsArgs = {
@@ -498,6 +508,7 @@ export type BotUserRegisteredByNodeAggregateSelection = {
   username: StringAggregateSelectionNonNullable;
   email: StringAggregateSelectionNonNullable;
   apiKey: StringAggregateSelectionNonNullable;
+  image: StringAggregateSelectionNullable;
 };
 
 export type Conversation = {
@@ -1006,6 +1017,7 @@ export type User = {
   username: Scalars["String"]["output"];
   email: Scalars["String"]["output"];
   apiKey: Scalars["String"]["output"];
+  image?: Maybe<Scalars["String"]["output"]>;
   bots: Array<Bot>;
   botsAggregate?: Maybe<UserBotBotsAggregationSelection>;
   botsConnection: UserBotsConnection;
@@ -1037,6 +1049,7 @@ export type UserAggregateSelection = {
   username: StringAggregateSelectionNonNullable;
   email: StringAggregateSelectionNonNullable;
   apiKey: StringAggregateSelectionNonNullable;
+  image: StringAggregateSelectionNullable;
 };
 
 export type UserBotBotsAggregationSelection = {
@@ -1432,6 +1445,61 @@ export type BotRegisteredByNodeAggregationWhereInput = {
   apiKey_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars["Float"]["input"]>;
   apiKey_LONGEST_LENGTH_LTE?: InputMaybe<Scalars["Int"]["input"]>;
   apiKey_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Aggregation filters that are not relying on an aggregating function will be deprecated. */
+  image_EQUAL?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_AVERAGE_EQUAL?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_LONGEST_EQUAL?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_SHORTEST_EQUAL?: InputMaybe<Scalars["Int"]["input"]>;
+  image_AVERAGE_LENGTH_EQUAL?: InputMaybe<Scalars["Float"]["input"]>;
+  image_LONGEST_LENGTH_EQUAL?: InputMaybe<Scalars["Int"]["input"]>;
+  image_SHORTEST_LENGTH_EQUAL?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Aggregation filters that are not relying on an aggregating function will be deprecated. */
+  image_GT?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_AVERAGE_GT?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_LONGEST_GT?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_SHORTEST_GT?: InputMaybe<Scalars["Int"]["input"]>;
+  image_AVERAGE_LENGTH_GT?: InputMaybe<Scalars["Float"]["input"]>;
+  image_LONGEST_LENGTH_GT?: InputMaybe<Scalars["Int"]["input"]>;
+  image_SHORTEST_LENGTH_GT?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Aggregation filters that are not relying on an aggregating function will be deprecated. */
+  image_GTE?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_AVERAGE_GTE?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_LONGEST_GTE?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_SHORTEST_GTE?: InputMaybe<Scalars["Int"]["input"]>;
+  image_AVERAGE_LENGTH_GTE?: InputMaybe<Scalars["Float"]["input"]>;
+  image_LONGEST_LENGTH_GTE?: InputMaybe<Scalars["Int"]["input"]>;
+  image_SHORTEST_LENGTH_GTE?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Aggregation filters that are not relying on an aggregating function will be deprecated. */
+  image_LT?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_AVERAGE_LT?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_LONGEST_LT?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_SHORTEST_LT?: InputMaybe<Scalars["Int"]["input"]>;
+  image_AVERAGE_LENGTH_LT?: InputMaybe<Scalars["Float"]["input"]>;
+  image_LONGEST_LENGTH_LT?: InputMaybe<Scalars["Int"]["input"]>;
+  image_SHORTEST_LENGTH_LT?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Aggregation filters that are not relying on an aggregating function will be deprecated. */
+  image_LTE?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_AVERAGE_LTE?: InputMaybe<Scalars["Float"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_LONGEST_LTE?: InputMaybe<Scalars["Int"]["input"]>;
+  /** @deprecated Please use the explicit _LENGTH version for string aggregation. */
+  image_SHORTEST_LTE?: InputMaybe<Scalars["Int"]["input"]>;
+  image_AVERAGE_LENGTH_LTE?: InputMaybe<Scalars["Float"]["input"]>;
+  image_LONGEST_LENGTH_LTE?: InputMaybe<Scalars["Int"]["input"]>;
+  image_SHORTEST_LENGTH_LTE?: InputMaybe<Scalars["Int"]["input"]>;
 };
 
 export type BotRegisteredByUpdateConnectionInput = {
@@ -2627,6 +2695,13 @@ export type MessageDisconnectInput = {
   tagged?: InputMaybe<MessageTaggedDisconnectInput>;
 };
 
+export type MessageInput = {
+  conversationId: Scalars["ID"]["input"];
+  from: Scalars["String"]["input"];
+  text: Scalars["String"]["input"];
+  timestamp: Scalars["String"]["input"];
+};
+
 export type MessageOptions = {
   /** Specify one or more MessageSort objects to sort Messages by. The sorts will be applied in the order in which they are arranged in the array. */
   sort?: InputMaybe<Array<MessageSort>>;
@@ -3485,6 +3560,7 @@ export type UserCreateInput = {
   username: Scalars["String"]["input"];
   email: Scalars["String"]["input"];
   apiKey: Scalars["String"]["input"];
+  image?: InputMaybe<Scalars["String"]["input"]>;
   bots?: InputMaybe<UserBotsFieldInput>;
 };
 
@@ -3500,6 +3576,7 @@ export type UserOnCreateInput = {
   username: Scalars["String"]["input"];
   email: Scalars["String"]["input"];
   apiKey: Scalars["String"]["input"];
+  image?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type UserOptions = {
@@ -3519,6 +3596,7 @@ export type UserSort = {
   username?: InputMaybe<SortDirection>;
   email?: InputMaybe<SortDirection>;
   apiKey?: InputMaybe<SortDirection>;
+  image?: InputMaybe<SortDirection>;
 };
 
 export type UserUniqueWhere = {
@@ -3530,6 +3608,7 @@ export type UserUpdateInput = {
   username?: InputMaybe<Scalars["String"]["input"]>;
   email?: InputMaybe<Scalars["String"]["input"]>;
   apiKey?: InputMaybe<Scalars["String"]["input"]>;
+  image?: InputMaybe<Scalars["String"]["input"]>;
   bots?: InputMaybe<Array<UserBotsUpdateFieldInput>>;
 };
 
@@ -3597,6 +3676,21 @@ export type UserWhere = {
   apiKey_NOT_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
   /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
   apiKey_NOT_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  image?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  image_NOT?: InputMaybe<Scalars["String"]["input"]>;
+  image_IN?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  image_NOT_IN?: InputMaybe<Array<InputMaybe<Scalars["String"]["input"]>>>;
+  image_CONTAINS?: InputMaybe<Scalars["String"]["input"]>;
+  image_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  image_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  image_NOT_CONTAINS?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  image_NOT_STARTS_WITH?: InputMaybe<Scalars["String"]["input"]>;
+  /** @deprecated Negation filters will be deprecated, use the NOT operator to achieve the same behavior */
+  image_NOT_ENDS_WITH?: InputMaybe<Scalars["String"]["input"]>;
   /** @deprecated Use `bots_SOME` instead. */
   bots?: InputMaybe<BotWhere>;
   /** @deprecated Use `bots_NONE` instead. */
@@ -3828,6 +3922,7 @@ export interface UserAggregateSelectionInput {
   username?: StringAggregateInputNonNullable;
   email?: StringAggregateInputNonNullable;
   apiKey?: StringAggregateInputNonNullable;
+  image?: StringAggregateInputNullable;
 }
 
 export declare class UserModel {

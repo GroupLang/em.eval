@@ -1,8 +1,25 @@
-type Query {
-  publicBots: [Bot]
+fragment MessageFragment on Message {
+  id
+  text
+  from
+  timestamp
 }
+
 type Mutation {
   addBot(input: BotInput): Bot
+  sendMessage(input: MessageInput): Message
+}
+
+type Query {
+  publicBots: [Bot]
+  getMessages(conversationId: ID!): [Message]
+}
+
+input MessageInput {
+  conversationId: ID!
+  from: String!
+  text: String!
+  timestamp: String!
 }
 
 input BotInput {
@@ -12,7 +29,7 @@ input BotInput {
   services: [ServiceInput!]!
 }
 
-input ServiceInput {
+input ServiceInput @node(labels: ["App_ServiceInput"]) {
   name: String!
 }
 
@@ -41,12 +58,13 @@ type EvaluationItem @node(labels: ["App_EvaluationItem"]) {
   distances: [Float]
 }
 
-type User @node(labels: ["App_User"]) {
+type User {
   id: ID! @id
   username: String!
   email: String! @unique @auth(requires: OWNER)
   apiKey: String! @unique
   bots: [Bot!]! @relationship(type: "HAS_BOT", direction: OUT)
+  image: String
 }
 
 type Emulee @node(labels: ["App_Emulee"]) {
