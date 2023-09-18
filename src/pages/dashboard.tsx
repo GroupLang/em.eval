@@ -1,9 +1,10 @@
 import { useSession } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/dist/client/router.js';
 import { gql } from 'graphql-tag';
-import {  useQuery, User } from '@/graphql';
+import { User, useQuery } from '@/graphql';
 import BotList from '@/components/BotList';
+import Filter from '@/components/BotFilter';
 
 
 const GET_USER = gql`
@@ -17,10 +18,10 @@ const GET_USER = gql`
 export default function Dashboard() {
   const { data: session } = useSession();
   const router = useRouter();
+  const [filter, setFilter] = useState({ text: '', showAuthorBots: false });
   const { data, loading, error } = useQuery<User>(GET_USER, {
     variables: { username: session?.user?.name },
   }) 
-  // Redirect to login page if not authenticated
   useEffect(() => {
     if (!loading && !session) {
       router.push('/api/auth/signin');
@@ -37,7 +38,9 @@ export default function Dashboard() {
   return (
     <div>
       <h1>Dashboard</h1>
-      { data ? <BotList user={data} /> : "" }
+      <Filter value={filter} onChange={setFilter} />
+      
+      {data ? <BotList user={data} filter={filter} /> : ""}
     </div>
   );
 }

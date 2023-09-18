@@ -1,12 +1,22 @@
 import { IResolvers } from '@graphql-tools/utils';
-import { Context } from './ogm';
-import { Conversation, Message } from './ogm';
+import { Session } from 'next-auth';
+import { OGM } from '@neo4j/graphql-ogm';
+import { Bot, Conversation, Message, User } from './ogm';
 
-interface SendMessageInput {
+export interface Context {
+  session: Session | null;
+  ogm: OGM;
+}
+export interface SendMessageInput {
   conversationId: string;
   from: string;
   text: string;
 }
+
+export interface ConversationInput {
+  botId: string,
+}
+
 
 interface AddBotInput {
   username: string;
@@ -22,6 +32,20 @@ const resolvers: IResolvers<any, Context> = {
     },
   },
   Mutation: {
+    createConversation: async (_: any, { input }: { input: ConversationInput }, context) => {
+      const { botId } = input;
+      const bot = await Bot.getBy("id", botId);
+      const user = await User.getBy("username", context.session?.user?.name);
+
+      if (user.username !== context.session?.user?.name) {
+        throw new Error('You are not authorized to send messages in this conversation.');
+      }
+      const conversation = await Conversation.new({ owner: user });
+      await bot.conversations.connect(conversation);
+      await user.conversations.connect(conversation);
+      return conversation;
+
+    },
     sendMessage: async (parent, { input }: { input: SendMessageInput }, context) => {
       const { conversationId, from, text } = input;
       const conversation = await Conversation.getBy("id", conversationId);

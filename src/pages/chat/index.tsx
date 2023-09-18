@@ -2,28 +2,23 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { FC, useEffect, useState, useRef, FormEvent } from 'react';
-import { ChatItem } from 'react-chat-elements';
 import { useSession, getSession } from 'next-auth/react';
 import { gql } from 'graphql-tag';
-import {  useMutation, useSubscription} from '@/graphql';
+import {   Message, useMutation, useSubscription} from '@/graphql';
+import ChatItemCollection from '@/components/ChatItems';
 import { Bot } from '@/graphql/ogm';
-
-type ChatMessage = {
-  text: string;
-  from: string;
-};
 
 type ChatConversation = {
   id: string;
-  messages: ChatMessage[];
+  messages: Message[];
 };
 
 export type ChatProps = {
-  bot: typeof Bot;
   conversation: ChatConversation;
+  bot: typeof Bot;
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps:GetServerSideProps = async (context)  => {
   const botUsername = context.params?.bot;
   const session = await getSession(context);
   if (!session) {
@@ -108,11 +103,13 @@ const Chat:FC<ChatProps> = ({ bot, conversation }) => {
       variables: {
         input: {
           conversationId: conversation.id,
-          from: bot.username,
+          from: bot,
           text,
         },
       },
-    });
+    }).catch((error) => {
+      console.error("Error sending message:", error);
+    });;
     element.value = "";
   };
 
@@ -142,11 +139,10 @@ const Chat:FC<ChatProps> = ({ bot, conversation }) => {
 
   return (
     <form onSubmit={handleSendMessage}>
-      {messages.map((message, index) => (
-        <ChatItem id={message.text} avatar='' key={index} {...message} />
-      ))}
-      <ChatItem id='end' avatar='' statusColor='red' />
+      <ChatItemCollection messages={messages}  />
       <div ref={messagesEndRef} />
     </form>
   );
 }
+
+export default Chat;

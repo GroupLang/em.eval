@@ -1,22 +1,18 @@
-fragment MessageFragment on Message {
-  id
-  text
-  from
-  timestamp
+type Query {
+  publicBots: [Bot]
 }
-
 type Mutation {
   addBot(input: BotInput): Bot
   sendMessage(input: MessageInput): Message
+  createConversation(input: ConversationInput): Conversation
 }
 
-type Query {
-  publicBots: [Bot]
-  getMessages(conversationId: ID!): [Message]
+input ConversationInput {
+  botId: ID!
+  userId: ID!
 }
 
 input MessageInput {
-  conversationId: ID!
   from: String!
   text: String!
   timestamp: String!
@@ -29,7 +25,7 @@ input BotInput {
   services: [ServiceInput!]!
 }
 
-input ServiceInput @node(labels: ["App_ServiceInput"]) {
+input ServiceInput {
   name: String!
 }
 
@@ -58,13 +54,14 @@ type EvaluationItem @node(labels: ["App_EvaluationItem"]) {
   distances: [Float]
 }
 
-type User {
+type User @node(labels: ["App_User"]) {
   id: ID! @id
   username: String!
   email: String! @unique @auth(requires: OWNER)
   apiKey: String! @unique
   bots: [Bot!]! @relationship(type: "HAS_BOT", direction: OUT)
-  image: String
+  conversations: [Conversation!]! @relationship(type: "PART_OF", direction: OUT)
+  ownedConversations: [Conversation!]! @relationship(type: "OWNED_BY", direction: IN)
 }
 
 type Emulee @node(labels: ["App_Emulee"]) {
@@ -75,6 +72,8 @@ type Conversation @node(labels: ["App_Conversation"]) {
   id: ID! @id
   messages: [Message!]! @relationship(type: "HAS_MESSAGE", direction: OUT)
   bots: [Bot!]! @relationship(type: "PART_OF", direction: IN)
+  users: [User!]! @relationship(type: "PART_OF", direction: IN)
+  owner: User! @relationship(type: "OWNED_BY", direction: OUT)
   service: Service @relationship(type: "HOSTED_ON", direction: OUT)
 }
 

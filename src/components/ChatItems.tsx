@@ -1,5 +1,6 @@
 // src/components/ChatItemCollection.tsx
 import { FC, useEffect, useRef } from 'react';
+import Avatar from 'react-avatar';
 import { ChatItem } from 'react-chat-elements';
 
 type ChatMessage = {
@@ -9,11 +10,9 @@ type ChatMessage = {
 
 type ChatItemCollectionProps = {
   messages: ChatMessage[];
-  userImage: string;
-  botImage: string;
 };
 
-const ChatItemCollection: FC<ChatItemCollectionProps> = ({ messages, userImage, botImage }) => {
+const ChatItemCollection: FC<ChatItemCollectionProps> = ({ messages }) => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = () => {
@@ -26,8 +25,8 @@ const ChatItemCollection: FC<ChatItemCollectionProps> = ({ messages, userImage, 
       {messages.map((message, index) => (
         <ChatItem
           id={message.text}
-          avatar={message.from === 'user' ? userImage : botImage}
           key={index}
+          avatar={""}
           {...message}
         />
       ))}
