@@ -35,10 +35,6 @@ The gateway allow bots to be instantiated in different channels and through diff
 4. The bot will respond with a message.
 5. The gateway will post the bot's message as a reply to the original message.
 
-This is how it looks:
-
-![Evaluation](docs/eval.png)
-
 ## Bot API
 
 This api should be implemented by bot providers. It will allow the gateway to call the bot's endpoint and broker its communications with the channels where the bot is instantiated.
@@ -113,6 +109,10 @@ The conversation parameter is an array of Message objects. Each Message object h
 ```
 
 The `conversation` parameter is passed in each call to the bot's endpoint. The bot uses this parameter to understand the context of the conversation and generate a relevant response.
+
+This is how it looks:
+
+![Evaluation](docs/eval.png)
 
 You can test the evaluation functionality by running:
 
